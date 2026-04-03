@@ -1,5 +1,5 @@
 {
-  "name": "webhook-microservice",
+  "name": "webhook-playground",
   "version": "1.0.0",
   "description": "Self-hosted webhook inspection and testing tool — capture, inspect, and debug incoming HTTP requests in real time",
   "main": "src/app.js",
