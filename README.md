@@ -80,11 +80,17 @@ webhook-ms
 webhook-ms start
 ```
 
-```
-Webhook microservice running at http://localhost:3000
+To run on a custom port:
+
+```bash
+PORT=8080 webhook-ms
 ```
 
-Open `http://localhost:3000` in your browser to access the dashboard.
+```
+Webhook microservice running at http://localhost:8080
+```
+
+Open `http://localhost:8080` in your browser to access the dashboard.
 
 ---
 
