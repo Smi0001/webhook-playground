@@ -71,7 +71,7 @@ webhook-play
 
 ---
 
-## Usage after publishing
+## Usage
 
 ### 1. Configure environment
 
