@@ -4,7 +4,7 @@ Self-hosted webhook inspection and testing tool. Capture, inspect, and debug inc
 ****
 Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates.
 
----
+---****
 
 ## Features
 
@@ -163,30 +163,6 @@ webhook-microservice/
 │   └── sse.js                # Server-Sent Events manager
 ├── .env.example
 └── package.json
-```
-
----
-
-## Publishing to npm
-
-```bash
-# Log in to npm
-npm login
-
-# Preview what will be published
-npm publish --dry-run
-
-# Publish
-npm publish
-```
-
-To release a new version:
-
-```bash
-npm version patch   # 1.0.0 → 1.0.1
-npm version minor   # 1.0.0 → 1.1.0
-npm version major   # 1.0.0 → 2.0.0
-npm publish
 ```
 
 ---
