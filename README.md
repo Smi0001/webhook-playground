@@ -57,6 +57,8 @@ PORT=3000
 BASE_URL=http://localhost:3000
 ```
 
+> Replace `user`, `password`, and `webhook_db` with your actual PostgreSQL credentials.
+
 Run migrations once:
 
 ```bash
