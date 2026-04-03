@@ -67,7 +67,7 @@ BASE_URL=http://localhost:3000
 ### 2. Run database migrations
 
 ```bash
-webhook-ms migrate
+webhook-play migrate
 ```
 
 This creates the required tables (`webhooks`, `webhook_requests`) in your database.
@@ -75,15 +75,15 @@ This creates the required tables (`webhooks`, `webhook_requests`) in your databa
 ### 3. Start the server
 
 ```bash
-webhook-ms
+webhook-play
 # or
-webhook-ms start
+webhook-play start
 ```
 
 To run on a custom port:
 
 ```bash
-PORT=8080 webhook-ms
+PORT=8080 webhook-play
 ```
 
 ```
@@ -97,9 +97,9 @@ Open `http://localhost:8080` in your browser to access the dashboard.
 ## CLI reference
 
 ```
-webhook-ms              Start the server
-webhook-ms start        Start the server (explicit)
-webhook-ms migrate      Run database migrations
+webhook-play              Start the server
+webhook-play start        Start the server (explicit)
+webhook-play migrate      Run database migrations
 ```
 
 ---
@@ -148,7 +148,7 @@ curl -u username:password \
 ```
 webhook-microservice/
 ├── bin/
-│   └── cli.js               # CLI entry point (webhook-ms command)
+│   └── cli.js               # CLI entry point (webhook-play command)
 ├── migrations/
 │   ├── migrate.js            # Migration runner
 │   └── schema.sql            # Database schema

@@ -13,8 +13,8 @@ if (cmd === 'migrate') {
   console.error(`Unknown command: ${cmd}`);
   console.error('');
   console.error('Usage:');
-  console.error('  webhook-ms              Start the server');
-  console.error('  webhook-ms start        Start the server');
-  console.error('  webhook-ms migrate      Run database migrations');
+  console.error('  webhook-play              Start the server');
+  console.error('  webhook-play start        Start the server');
+  console.error('  webhook-play migrate      Run database migrations');
   process.exit(1);
 }
