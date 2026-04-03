@@ -1,0 +1,7 @@
+ALTER TABLE webhooks
+  ADD COLUMN IF NOT EXISTS forward_enabled BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS forward_url     TEXT;
+
+ALTER TABLE webhook_requests
+  ADD COLUMN IF NOT EXISTS forward_status  INTEGER,
+  ADD COLUMN IF NOT EXISTS forward_error   TEXT;

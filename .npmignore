@@ -1,0 +1,14 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Dev tooling
+.claude/
+.git/
+.gitignore
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook Inspector</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .landing-header { display: flex; justify-content: space-between; align-items: center; }
+    .header-right { font-size: 12px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<header class="landing-header">
+  <div class="logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>
+    </svg>
+    Webhook Inspector
+  </div>
+  <div class="header-right">Internal Tool &mdash; No Login Required</div>
+</header>
+
+<main class="landing-main">
+
+  <!-- Create Section -->
+  <section class="create-section">
+    <h1>Create a Webhook URL</h1>
+    <p>Generate a unique URL to capture and inspect incoming HTTP requests in real time.</p>
+
+    <div class="create-card">
+      <div class="form-group">
+        <label>Your webhook URL</label>
+        <div class="url-preview-box">
+          <span class="url-prefix" id="urlPrefix"></span>
+          <span class="url-uuid"  id="urlUuid">loading…</span>
+          <div class="url-actions">
+            <button class="btn-icon" id="refreshBtn" title="Generate new UUID">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="webhookName">Name this URL</label>
+        <input type="text" id="webhookName" placeholder="e.g. GitHub webhook, Stripe events…" maxlength="120">
+      </div>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="forwardToggle">
+        <span>Forward received requests to another URL</span>
+      </label>
+
+      <div class="auth-fields hidden" id="forwardFields">
+        <div class="form-group">
+          <label for="forwardUrl">Destination URL</label>
+          <input type="url" id="forwardUrl" placeholder="https://example.com/your-endpoint">
+          <span style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">
+            Every incoming request will be forwarded immediately using the same method, headers, and body.
+          </span>
+        </div>
+      </div>
+
+      <label class="toggle-row">
+        <input type="checkbox" id="basicAuthToggle">
+        <span>Enable Basic Auth (optional — restricts who can send requests)</span>
+      </label>
+
+      <div class="auth-fields hidden" id="authFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="authUsername">Username</label>
+            <input type="text" id="authUsername" placeholder="username" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="authPassword">Password</label>
+            <input type="password" id="authPassword" placeholder="password" autocomplete="new-password">
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn btn-primary" id="createBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Create &amp; Open Dashboard
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Existing Webhooks -->
+  <section>
+    <div class="section-heading">
+      <span>Existing Webhook URLs</span>
+      <span id="totalCount" style="font-size:12px;font-weight:400;color:var(--text-muted)"></span>
+    </div>
+
+    <!-- List controls: search + bulk toolbar -->
+    <div class="list-controls">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name or URL…" autocomplete="off">
+        <button class="search-clear hidden" id="searchClear" title="Clear search">✕</button>
+      </div>
+    </div>
+
+    <!-- Bulk action toolbar (visible when ≥1 item selected) -->
+    <div class="bulk-toolbar hidden" id="bulkToolbar">
+      <label class="toggle-row" style="gap:8px;">
+        <input type="checkbox" id="selectAllChk">
+        <span id="selectedCount" style="font-size:13px;color:var(--text-secondary);font-weight:500;">0 selected</span>
+      </label>
+      <button class="btn btn-danger" id="bulkDeleteBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Delete selected
+      </button>
+    </div>
+
+    <div id="webhookList" class="webhook-list">
+      <div class="webhook-list-empty">Loading…</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script src="/js/landing.js"></script>
+</body>
+</html>
