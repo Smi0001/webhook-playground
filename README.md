@@ -1,6 +1,6 @@
 # webhook-playground
 
-Self-hosted webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private Webhook Collection that you run yourself.
+Self-hosted microservice to use as webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private Webhook Collection that you run yourself.
 ****
 Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates.
 
