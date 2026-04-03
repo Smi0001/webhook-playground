@@ -25,6 +25,29 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 
 ---
 
+## Prerequisites: Set up a PostgreSQL database
+
+Before running the app, create a dedicated database and user:
+
+```bash
+psql -U postgres
+```
+
+```sql
+CREATE DATABASE webhook_db;
+CREATE USER webhook_user WITH PASSWORD 'yourpassword';
+GRANT ALL PRIVILEGES ON DATABASE webhook_db TO webhook_user;
+\q
+```
+
+Then use these credentials in your `.env`:
+
+```env
+DATABASE_URL=postgresql://webhook_user:yourpassword@localhost:5432/webhook_db
+```
+
+---
+
 ## Installation
 
 ### Global install (recommended for team/internal use)
