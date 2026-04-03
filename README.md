@@ -41,6 +41,36 @@ npx webhook-playground
 
 ---
 
+## Global install usage
+
+After installing globally, create a working directory, add your `.env` file there, and run all commands from that directory:
+
+```bash
+mkdir my-webhooks && cd my-webhooks
+```
+
+Create a `.env` file:
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/webhook_db
+PORT=3000
+BASE_URL=http://localhost:3000
+```
+
+Run migrations once:
+
+```bash
+webhook-play migrate
+```
+
+Start the server:
+
+```bash
+webhook-play
+```
+
+---
+
 ## Usage after publishing
 
 ### 1. Configure environment
