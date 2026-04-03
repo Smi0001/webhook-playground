@@ -1,7 +1,7 @@
-# webhook-microservice
+# webhook-playground
 
-Self-hosted webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private [webhook.site](https://webhook.site) you run yourself.
-
+Self-hosted webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private Webhook Collection that you run yourself.
+****
 Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates.
 
 ---
@@ -14,6 +14,7 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 - Optional per-webhook Basic Auth protection
 - Web dashboard UI included
 - Stores request history (up to 200 per webhook)
+- Forward incoming requests to any target URL and capture the response
 
 ---
 
@@ -29,13 +30,13 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 ### Global install (recommended for team/internal use)
 
 ```bash
-npm install -g webhook-microservice
+npm install -g webhook-playground
 ```
 
 ### Or run without installing
 
 ```bash
-npx webhook-microservice
+npx webhook-playground
 ```
 
 ---
