@@ -1,10 +1,10 @@
 # webhook-playground
 
-Self-hosted webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private Webhook Collection that you run yourself.
+Self-hosted microservice to use as webhook inspection and testing tool. Capture, inspect, and debug incoming HTTP requests in real time — like a private Webhook Collection that you run yourself.
 ****
 Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates.
 
----
+---****
 
 ## Features
 
@@ -25,6 +25,29 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 
 ---
 
+## Prerequisites: Set up a PostgreSQL database
+
+Before running the app, create a dedicated database and user:
+
+```bash
+psql -U postgres
+```
+
+```sql
+CREATE DATABASE webhook_db;
+CREATE USER webhook_user WITH PASSWORD 'yourpassword';
+GRANT ALL PRIVILEGES ON DATABASE webhook_db TO webhook_user;
+\q
+```
+
+Then use these credentials in your `.env`:
+
+```env
+DATABASE_URL=postgresql://webhook_user:yourpassword@localhost:5432/webhook_db
+```
+
+---
+
 ## Installation
 
 ### Global install (recommended for team/internal use)
@@ -41,7 +64,39 @@ npx webhook-playground
 
 ---
 
-## Usage after publishing
+## Global install usage
+
+After installing globally, create a working directory, add your `.env` file there, and run all commands from that directory:
+
+```bash
+mkdir my-webhooks && cd my-webhooks
+```
+
+Create a `.env` file:
+
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/webhook_db
+PORT=3000
+BASE_URL=http://localhost:3000
+```
+
+> Replace `user`, `password`, and `webhook_db` with your actual PostgreSQL credentials.
+
+Run migrations once:
+
+```bash
+webhook-play migrate
+```
+
+Start the server:
+
+```bash
+webhook-play
+```
+
+---
+
+## Usage
 
 ### 1. Configure environment
 
@@ -67,7 +122,7 @@ BASE_URL=http://localhost:3000
 ### 2. Run database migrations
 
 ```bash
-webhook-ms migrate
+webhook-play migrate
 ```
 
 This creates the required tables (`webhooks`, `webhook_requests`) in your database.
@@ -75,25 +130,31 @@ This creates the required tables (`webhooks`, `webhook_requests`) in your databa
 ### 3. Start the server
 
 ```bash
-webhook-ms
+webhook-play
 # or
-webhook-ms start
+webhook-play start
+```
+
+To run on a custom port:
+
+```bash
+PORT=8080 webhook-play
 ```
 
 ```
-Webhook microservice running at http://localhost:3000
+Webhook microservice running at http://localhost:8080
 ```
 
-Open `http://localhost:3000` in your browser to access the dashboard.
+Open `http://localhost:8080` in your browser to access the dashboard.
 
 ---
 
 ## CLI reference
 
 ```
-webhook-ms              Start the server
-webhook-ms start        Start the server (explicit)
-webhook-ms migrate      Run database migrations
+webhook-play              Start the server
+webhook-play start        Start the server (explicit)
+webhook-play migrate      Run database migrations
 ```
 
 ---
@@ -142,7 +203,7 @@ curl -u username:password \
 ```
 webhook-microservice/
 ├── bin/
-│   └── cli.js               # CLI entry point (webhook-ms command)
+│   └── cli.js               # CLI entry point (webhook-play command)
 ├── migrations/
 │   ├── migrate.js            # Migration runner
 │   └── schema.sql            # Database schema
@@ -163,30 +224,6 @@ webhook-microservice/
 │   └── sse.js                # Server-Sent Events manager
 ├── .env.example
 └── package.json
-```
-
----
-
-## Publishing to npm
-
-```bash
-# Log in to npm
-npm login
-
-# Preview what will be published
-npm publish --dry-run
-
-# Publish
-npm publish
-```
-
-To release a new version:
-
-```bash
-npm version patch   # 1.0.0 → 1.0.1
-npm version minor   # 1.0.0 → 1.1.0
-npm version major   # 1.0.0 → 2.0.0
-npm publish
 ```
 
 ---
