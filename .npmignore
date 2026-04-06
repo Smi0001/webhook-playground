@@ -5,6 +5,7 @@
 
 # Dev tooling
 .claude/
+*.code-workspace
 .git/
 .gitignore
 node_modules/
