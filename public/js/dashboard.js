@@ -5,7 +5,7 @@
 // Extract UUID from path: /microservices/webhook/:uuid
 const pathParts = window.location.pathname.split('/');
 const UUID = pathParts[pathParts.length - 1];
-const BASE_URL = `${window.location.origin}/microservices/webhook/${UUID}`;
+const BASE_URL = `${window.location.origin}${window.APP_BASE || ''}/microservices/webhook/${UUID}`;
 
 let activeRequestId = null;
 let eventSource    = null;
@@ -92,7 +92,7 @@ function prependSidebarItem(req) {
 
 async function loadRequests() {
   try {
-    const res = await fetch(`/api/webhooks/${UUID}/requests`);
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests`);
     const list = await res.json();
     const sidebarList = document.getElementById('sidebarList');
     sidebarList.innerHTML = '';
@@ -135,7 +135,7 @@ async function selectRequest(id) {
   }
 
   try {
-    const res = await fetch(`/api/webhooks/${UUID}/requests/${id}`);
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests/${id}`);
     if (!res.ok) throw new Error('Not found');
     const req = await res.json();
     renderDetail(req);
@@ -264,7 +264,7 @@ function copyToClipboard(text) {
 async function deleteRequest(event, id) {
   event.stopPropagation();
   try {
-    await fetch(`/api/webhooks/${UUID}/requests/${id}`, { method: 'DELETE' });
+    await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests/${id}`, { method: 'DELETE' });
     document.getElementById(`req-${id}`)?.remove();
     if (activeRequestId === id) {
       document.getElementById('detailContent').classList.add('hidden');
@@ -290,7 +290,7 @@ async function clearAll() {
   if (!document.querySelector('.request-item')) return;
   if (!confirm('Clear all recorded requests for this webhook?')) return;
   try {
-    await fetch(`/api/webhooks/${UUID}/requests`, { method: 'DELETE' });
+    await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests`, { method: 'DELETE' });
     document.getElementById('sidebarList').innerHTML = `
       <div class="sidebar-empty" id="sidebarEmpty">
         <div class="pulse-ring"></div>
@@ -310,8 +310,8 @@ async function clearAll() {
 async function deleteWebhook() {
   if (!confirm('Permanently delete this webhook URL and all its data?')) return;
   try {
-    await fetch(`/api/webhooks/${UUID}`, { method: 'DELETE' });
-    window.location.href = '/';
+    await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}`, { method: 'DELETE' });
+    window.location.href = (window.APP_BASE || '') + '/';
   } catch (err) {
     showToast('Failed to delete webhook.');
   }
@@ -321,7 +321,7 @@ async function deleteWebhook() {
 
 function connectSSE() {
   const dot = document.getElementById('connDot');
-  eventSource = new EventSource(`/api/webhooks/${UUID}/stream`);
+  eventSource = new EventSource(`${window.APP_BASE || ''}/api/webhooks/${UUID}/stream`);
 
   eventSource.onopen = () => {
     dot.classList.add('live');
@@ -359,7 +359,7 @@ function connectSSE() {
 
 async function loadWebhookMeta() {
   try {
-    const res = await fetch(`/api/webhooks/${UUID}`);
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}`);
     if (!res.ok) {
       document.title = 'Not Found — Webhook Inspector';
       return;

@@ -3,7 +3,7 @@
    ============================================= */
 
 const BASE   = window.location.origin;
-const PREFIX = `${BASE}/microservices/webhook/`;
+const PREFIX = `${BASE}${window.APP_BASE || ''}/microservices/webhook/`;
 
 let currentUuid  = '';
 let allWebhooks  = [];        // full list from API
@@ -153,7 +153,7 @@ function handleSelectAll(checked) {
 // ---------- Load from API ----------
 async function loadWebhooks() {
   try {
-    const res  = await fetch('/api/webhooks');
+    const res  = await fetch(`${window.APP_BASE || ''}/api/webhooks`);
     allWebhooks = await res.json();
     selectedUuids.clear();
     updateBulkToolbar();
@@ -193,7 +193,7 @@ async function createWebhook() {
   btn.textContent = 'Creating…';
 
   try {
-    const res  = await fetch('/api/webhooks', {
+    const res  = await fetch(`${window.APP_BASE || ''}/api/webhooks`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
@@ -207,7 +207,7 @@ async function createWebhook() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
-    window.location.href = `/microservices/webhook/${data.uuid}`;
+    window.location.href = `${window.APP_BASE || ''}/microservices/webhook/${data.uuid}`;
   } catch (err) {
     showToast(`Error: ${err.message}`);
     btn.disabled = false;
@@ -221,7 +221,7 @@ async function createWebhook() {
 async function deleteWebhook(uuid) {
   if (!confirm('Delete this webhook URL and all its recorded requests?')) return;
   try {
-    const res = await fetch(`/api/webhooks/${uuid}`, { method: 'DELETE' });
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${uuid}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete');
     allWebhooks  = allWebhooks.filter((w) => w.uuid !== uuid);
     selectedUuids.delete(uuid);
@@ -244,7 +244,7 @@ async function bulkDelete() {
   btn.textContent = 'Deleting…';
 
   const results = await Promise.allSettled(
-    uuids.map((uuid) => fetch(`/api/webhooks/${uuid}`, { method: 'DELETE' }))
+    uuids.map((uuid) => fetch(`${window.APP_BASE || ''}/api/webhooks/${uuid}`, { method: 'DELETE' }))
   );
 
   const failed = results.filter((r) => r.status === 'rejected' || !r.value?.ok).length;
@@ -272,7 +272,7 @@ function copyUrl(url) {
 }
 
 function openDashboard(uuid) {
-  window.open(`/microservices/webhook/${uuid}`, '_blank');
+  window.open(`${window.APP_BASE || ''}/microservices/webhook/${uuid}`, '_blank');
 }
 
 // ---------- Init ----------
