@@ -5,6 +5,17 @@ const bcrypt = require('bcrypt');
 const db = require('../config/database');
 const sse = require('../sse');
 
+// ---------- Health Check ----------
+
+router.get('/health', async (req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (err) {
+    res.status(503).json({ status: 'error', db: 'unreachable', message: err.message });
+  }
+});
+
 // ---------- Webhooks CRUD ----------
 
 // Create a new webhook URL
