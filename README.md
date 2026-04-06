@@ -6,25 +6,25 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 
 ---
 
-## Table of contents
+## 📋 Table of contents
 
-- [Features](#features)
-- [Requirements](#requirements)
-- [Prerequisites: Set up a PostgreSQL database](#prerequisites-set-up-a-postgresql-database)
-- [Installation](#installation)
-- [Global install usage](#global-install-usage)
-- [Usage](#usage)
-- [Deploying behind a reverse proxy (Nginx)](#deploying-behind-a-reverse-proxy-nginx)
-- [CLI reference](#cli-reference)
-- [API reference](#api-reference)
-- [Webhook receiver](#webhook-receiver)
-- [Project structure](#project-structure)
-- [What's new](#whats-new)
-- [License](#license)
+- [✨ Features](#-features)
+- [🔧 Requirements](#-requirements)
+- [🗄️ Prerequisites: Set up a PostgreSQL database](#️-prerequisites-set-up-a-postgresql-database)
+- [📦 Installation](#-installation)
+- [🚀 Global install usage](#-global-install-usage)
+- [⚙️ Usage](#️-usage)
+- [🌐 Deploying behind a reverse proxy (Nginx)](#-deploying-behind-a-reverse-proxy-nginx)
+- [💻 CLI reference](#-cli-reference)
+- [📡 API reference](#-api-reference)
+- [🪝 Webhook receiver](#-webhook-receiver)
+- [🗂️ Project structure](#️-project-structure)
+- [🆕 What's new](#-whats-new)
+- [📄 License](#-license)
 
 ---
 
-## Features
+## ✨ Features
 
 - Create named webhook endpoints with unique URLs
 - Capture any HTTP method (GET, POST, PUT, DELETE, PATCH, etc.)
@@ -36,14 +36,14 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 
 ---
 
-## Requirements
+## 🔧 Requirements
 
 - Node.js >= 18
 - PostgreSQL database
 
 ---
 
-## Prerequisites: Set up a PostgreSQL database
+## 🗄️ Prerequisites: Set up a PostgreSQL database
 
 Before running the app, create a dedicated database and user:
 
@@ -66,7 +66,7 @@ DATABASE_URL=postgresql://webhook_user:yourpassword@localhost:5432/webhook_db
 
 ---
 
-## Installation
+## 📦 Installation
 
 ### Global install (recommended for team/internal use)
 
@@ -82,7 +82,7 @@ npx webhook-playground
 
 ---
 
-## Global install usage
+## 🚀 Global install usage
 
 After installing globally, create a working directory, add your `.env` file there, and run all commands from that directory:
 
@@ -114,7 +114,7 @@ webhook-play
 
 ---
 
-## Usage
+## ⚙️ Usage
 
 ### 1. Configure environment
 
@@ -135,7 +135,7 @@ BASE_URL=http://localhost:3000
 | `DATABASE_URL` | Yes      | PostgreSQL connection string                             |
 | `PORT`         | No       | Port to listen on (default: `3000`)                      |
 | `BASE_URL`     | No       | Public-facing URL shown in the dashboard for webhook URLs |
-| `BASE_PATH`    | No       | Sub-path prefix when served under a nested route (e.g. `/webhook`). See [reverse proxy setup](#deploying-behind-a-reverse-proxy-nginx). |
+| `BASE_PATH`    | No       | Sub-path prefix when served under a nested route (e.g. `/webhook`). See [reverse proxy setup](#-deploying-behind-a-reverse-proxy-nginx). |
 | `DB_SSL`       | No       | Set to `true` to enable SSL for the DB connection        |
 
 ### 2. Run database migrations
@@ -168,7 +168,7 @@ Open `http://localhost:8080` in your browser to access the dashboard.
 
 ---
 
-## Deploying behind a reverse proxy (Nginx)
+## 🌐 Deploying behind a reverse proxy (Nginx)
 
 ### Root deployment (app served at `/`)
 
@@ -233,7 +233,7 @@ The app will then be accessible at `https://yourdomain.com/webhook/`.
 
 ---
 
-### Health check endpoint
+### 🩺 Health check endpoint
 
 Useful for verifying a fresh install without needing any existing data:
 
@@ -247,7 +247,7 @@ With a sub-path deployment: `GET /webhook/api/health`
 
 ---
 
-## CLI reference
+## 💻 CLI reference
 
 ```
 webhook-play              Start the server
@@ -257,7 +257,7 @@ webhook-play migrate      Run database migrations
 
 ---
 
-## API reference
+## 📡 API reference
 
 | Method   | Endpoint                               | Description                        |
 |----------|----------------------------------------|------------------------------------|
@@ -278,7 +278,7 @@ webhook-play migrate      Run database migrations
 
 ---
 
-## Webhook receiver
+## 🪝 Webhook receiver
 
 Send any HTTP request to:
 
@@ -299,7 +299,7 @@ curl -u username:password \
 
 ---
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 webhook-microservice/
@@ -329,40 +329,40 @@ webhook-microservice/
 
 ---
 
-## What's new
+## 🆕 What's new
 
 ### 2.1.2
-- Added `BASE_PATH` environment variable support — serve the app under a sub-path (e.g. `/webhook`) when sharing a domain with another application
-- All frontend API calls and navigation use the base path automatically via injected `window.APP_BASE`
-- HTML asset paths updated to be relative, resolving correctly at any prefix depth
-- Added Nginx reverse proxy documentation for both root and sub-path deployments
+- ➕ Added `BASE_PATH` environment variable support — serve the app under a sub-path (e.g. `/webhook`) when sharing a domain with another application
+- 🔗 All frontend API calls and navigation use the base path automatically via injected `window.APP_BASE`
+- 🛠️ HTML asset paths updated to be relative, resolving correctly at any prefix depth
+- 📝 Added Nginx reverse proxy documentation for both root and sub-path deployments
 
 ### 2.1.1
-- Added `GET /api/health` endpoint — returns app and database status without requiring any existing data; useful for verifying a fresh install
+- ➕ Added `GET /api/health` endpoint — returns app and database status without requiring any existing data; useful for verifying a fresh install
 
 ### 2.1.0
-- Added request forwarding — forward incoming webhook requests to any destination URL and capture the response status
-- Forward status shown in the dashboard in real time via SSE
+- ➕ Added request forwarding — forward incoming webhook requests to any destination URL and capture the response status
+- 📡 Forward status shown in the dashboard in real time via SSE
 
 ### 2.0.1
-- Documentation improvements: PostgreSQL setup prerequisites, credential placeholder notes
+- 📝 Documentation improvements: PostgreSQL setup prerequisites, credential placeholder notes
 
 ### 2.0.0
-- Rebranded package to `webhook-playground`
-- CLI command renamed to `webhook-play`
-- Added global install support with working directory workflow
+- 🎉 Rebranded package to `webhook-playground`
+- 🔄 CLI command renamed to `webhook-play`
+- 🚀 Added global install support with working directory workflow
 
 ### 1.0.2
-- Fixed README CLI command references
+- 🐛 Fixed README CLI command references
 
 ### 1.0.1
-- Renamed CLI command from `webhook-ms` to `webhook-play`
+- 🔄 Renamed CLI command from `webhook-ms` to `webhook-play`
 
 ### 1.0.0
-- Initial release — webhook inspection microservice with Express.js, PostgreSQL, SSE real-time updates, Basic Auth support, and web dashboard UI
+- 🎉 Initial release — webhook inspection microservice with Express.js, PostgreSQL, SSE real-time updates, Basic Auth support, and web dashboard UI
 
 ---
 
-## License
+## 📄 License
 
 MIT
