@@ -163,6 +163,7 @@ webhook-play migrate      Run database migrations
 
 | Method   | Endpoint                               | Description                        |
 |----------|----------------------------------------|------------------------------------|
+| `GET`    | `/api/health`                          | Health check (app + DB status)     |
 | `POST`   | `/api/webhooks`                        | Create a new webhook               |
 | `GET`    | `/api/webhooks`                        | List all webhooks                  |
 | `GET`    | `/api/webhooks/:uuid`                  | Get a single webhook               |
