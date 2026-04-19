@@ -214,8 +214,9 @@ function renderBody(req) {
   }
 
   block.innerHTML = `
-    <button class="body-copy-btn" onclick="copyToClipboard(${JSON.stringify(display)})">Copy</button>
+    <button class="body-copy-btn" id="bodyCopyBtn">Copy</button>
     <pre>${escapeHtml(display)}</pre>`;
+  document.getElementById('bodyCopyBtn').addEventListener('click', () => copyToClipboard(display));
 }
 
 function renderForwarding(req) {
