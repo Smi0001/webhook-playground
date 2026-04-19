@@ -331,6 +331,12 @@ webhook-microservice/
 
 ## 🆕 What's new
 
+### 2.2.0
+- ➕ Toggle request forwarding on/off in real-time from the dashboard — no need to recreate the webhook
+- ✏️ Destination URL is editable inline; changes apply immediately
+- 🕘 When the forwarding URL is changed, the previous value is retained and shown with strikethrough for quick reference
+- 🐛 Fixed response body "Copy" button that was broken when the body contained double quotes
+
 ### 2.1.2
 - ➕ Added `BASE_PATH` environment variable support — serve the app under a sub-path (e.g. `/webhook`) when sharing a domain with another application
 - 🔗 All frontend API calls and navigation use the base path automatically via injected `window.APP_BASE`
