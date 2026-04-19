@@ -220,16 +220,16 @@ function renderBody(req) {
 }
 
 function renderForwarding(req) {
-  const section = document.getElementById('sectionForwarding');
   const badge   = document.getElementById('fwdStatusBadge');
   const detail  = document.getElementById('fwdDetail');
 
-  // Only show section if this webhook has forwarding (check webhookMeta stored globally)
+  renderForwardingControls();
+
   if (!webhookMeta?.forward_enabled) {
-    section.style.display = 'none';
+    badge.innerHTML = '';
+    detail.innerHTML = '';
     return;
   }
-  section.style.display = '';
 
   if (req.forward_error) {
     badge.innerHTML = `<span class="fwd-badge fwd-error">Error</span>`;
@@ -247,6 +247,52 @@ function renderForwarding(req) {
     detail.innerHTML = `
       <div class="fwd-row"><span class="fwd-label">Destination</span><span class="fwd-value">${escapeHtml(webhookMeta.forward_url)}</span></div>
       <div class="fwd-row"><span class="fwd-label">Status</span><span class="fwd-value" style="color:var(--text-muted)">Forwarding in progress…</span></div>`;
+  }
+}
+
+function renderForwardingControls() {
+  const checkbox   = document.getElementById('fwdEnabledCheckbox');
+  const urlEdit    = document.getElementById('fwdUrlEdit');
+  const urlInput   = document.getElementById('fwdUrlInput');
+  const prevUrlEl  = document.getElementById('fwdPreviousUrl');
+
+  const enabled = !!webhookMeta?.forward_enabled;
+  checkbox.checked = enabled;
+  urlEdit.style.display = enabled ? 'flex' : 'none';
+
+  if (enabled && webhookMeta.forward_url) {
+    urlInput.value = webhookMeta.forward_url;
+  }
+
+  if (webhookMeta?.previous_forward_url) {
+    prevUrlEl.style.display = '';
+    prevUrlEl.innerHTML = `Previous: <span>${escapeHtml(webhookMeta.previous_forward_url)}</span>`;
+  } else {
+    prevUrlEl.style.display = 'none';
+  }
+}
+
+async function updateForwarding(enabled, url) {
+  try {
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        forward_enabled: enabled,
+        forward_url: url || undefined,
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      showToast(err.error || 'Failed to update forwarding');
+      return;
+    }
+    const updated = await res.json();
+    webhookMeta = { ...webhookMeta, ...updated };
+    renderForwardingControls();
+    showToast(enabled ? 'Forwarding enabled' : 'Forwarding disabled');
+  } catch (_) {
+    showToast('Failed to update forwarding');
   }
 }
 
@@ -370,6 +416,7 @@ async function loadWebhookMeta() {
     document.getElementById('webhookName').textContent = wh.name;
     document.getElementById('webhookUrl').textContent = BASE_URL;
     document.title = `${wh.name} — Webhook Inspector`;
+    renderForwardingControls();
   } catch (_) {}
 }
 
@@ -404,4 +451,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('deleteWebhookBtn').addEventListener('click', deleteWebhook);
   document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+
+  document.getElementById('fwdEnabledCheckbox').addEventListener('change', (e) => {
+    const enabled = e.target.checked;
+    const urlEdit = document.getElementById('fwdUrlEdit');
+    urlEdit.style.display = enabled ? 'flex' : 'none';
+    if (!enabled) {
+      updateForwarding(false, null);
+    }
+  });
+
+  document.getElementById('fwdSaveBtn').addEventListener('click', () => {
+    const url = document.getElementById('fwdUrlInput').value.trim();
+    if (!url) {
+      showToast('Please enter a forwarding URL');
+      return;
+    }
+    updateForwarding(true, url);
+  });
 });

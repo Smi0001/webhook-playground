@@ -55,7 +55,7 @@ router.get('/webhooks', async (req, res) => {
   try {
     const { rows } = await db.query(
       `SELECT id, uuid, name, basic_auth_enabled, basic_auth_username,
-              forward_enabled, forward_url, created_at
+              forward_enabled, forward_url, previous_forward_url, created_at
        FROM webhooks ORDER BY created_at DESC`
     );
     res.json(rows);
@@ -70,7 +70,7 @@ router.get('/webhooks/:uuid', async (req, res) => {
   try {
     const { rows } = await db.query(
       `SELECT id, uuid, name, basic_auth_enabled, basic_auth_username,
-              forward_enabled, forward_url, created_at
+              forward_enabled, forward_url, previous_forward_url, created_at
        FROM webhooks WHERE uuid = $1`,
       [req.params.uuid]
     );
@@ -97,24 +97,32 @@ router.put('/webhooks/:uuid', async (req, res) => {
       hashedPw = null;
     }
 
+    const oldUrl = existing.rows[0].forward_url;
+    const newUrl = forward_enabled ? (forward_url?.trim() || oldUrl) : null;
+    const previousUrl = (newUrl && oldUrl && newUrl !== oldUrl)
+      ? oldUrl
+      : existing.rows[0].previous_forward_url;
+
     const { rows } = await db.query(
       `UPDATE webhooks
-       SET name                = COALESCE($1, name),
-           basic_auth_enabled  = $2,
-           basic_auth_username = $3,
-           basic_auth_password = $4,
-           forward_enabled     = $5,
-           forward_url         = $6
-       WHERE uuid = $7
+       SET name                 = COALESCE($1, name),
+           basic_auth_enabled   = $2,
+           basic_auth_username  = $3,
+           basic_auth_password  = $4,
+           forward_enabled      = $5,
+           forward_url          = $6,
+           previous_forward_url = $7
+       WHERE uuid = $8
        RETURNING id, uuid, name, basic_auth_enabled, basic_auth_username,
-                 forward_enabled, forward_url, created_at`,
+                 forward_enabled, forward_url, previous_forward_url, created_at`,
       [
         name ? name.trim() : null,
         !!basic_auth_enabled,
         basic_auth_enabled ? (basic_auth_username || existing.rows[0].basic_auth_username) : null,
         hashedPw,
         !!forward_enabled,
-        forward_enabled ? (forward_url?.trim() || existing.rows[0].forward_url) : null,
+        newUrl,
+        previousUrl,
         req.params.uuid,
       ]
     );

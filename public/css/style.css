@@ -684,6 +684,62 @@ a:hover { text-decoration: underline; }
 .fwd-error   { background: #fee2e2; color: #991b1b; }
 .fwd-pending { background: #f1f5f9; color: var(--text-muted); }
 
+/* Forwarding controls */
+.fwd-controls {
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fwd-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.fwd-toggle input[type=checkbox] {
+  width: 16px; height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.fwd-url-edit {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.fwd-url-edit input {
+  flex: 1;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  color: var(--text);
+  background: var(--bg-white);
+  outline: none;
+  transition: border-color .15s;
+}
+.fwd-url-edit input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(88,101,242,.15);
+}
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.fwd-previous-url {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  padding: 0 2px;
+}
+.fwd-previous-url span {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  opacity: .7;
+}
+
 /* Forwarding detail rows inside collapsible */
 .fwd-detail { padding: 0; }
 .fwd-row {

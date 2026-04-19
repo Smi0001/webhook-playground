@@ -105,7 +105,7 @@
         </div>
 
         <!-- Forwarding -->
-        <div class="collapsible open" id="sectionForwarding" style="display:none">
+        <div class="collapsible open" id="sectionForwarding">
           <div class="collapsible-header" onclick="toggleSection('sectionForwarding')">
             <span class="collapsible-title">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -115,6 +115,17 @@
             <span class="collapsible-arrow">▾</span>
           </div>
           <div class="collapsible-body">
+            <div class="fwd-controls">
+              <label class="fwd-toggle">
+                <input type="checkbox" id="fwdEnabledCheckbox">
+                <span>Enable forwarding</span>
+              </label>
+              <div class="fwd-url-edit" id="fwdUrlEdit" style="display:none">
+                <input type="url" id="fwdUrlInput" placeholder="https://example.com/webhook" spellcheck="false">
+                <button class="btn btn-primary btn-sm" id="fwdSaveBtn">Save</button>
+              </div>
+              <div id="fwdPreviousUrl" class="fwd-previous-url" style="display:none"></div>
+            </div>
             <div id="fwdDetail" class="fwd-detail"></div>
           </div>
         </div>
