@@ -12,6 +12,7 @@ Built with Express.js, PostgreSQL, and Server-Sent Events (SSE) for live updates
 - [🔧 Requirements](#-requirements)
 - [🗄️ Prerequisites: Set up a PostgreSQL database](#️-prerequisites-set-up-a-postgresql-database)
 - [📦 Installation](#-installation)
+- [⬆️ Upgrading](#️-upgrading)
 - [🚀 Global install usage](#-global-install-usage)
 - [⚙️ Usage](#️-usage)
 - [🌐 Deploying behind a reverse proxy (Nginx)](#-deploying-behind-a-reverse-proxy-nginx)
@@ -79,6 +80,19 @@ npm install -g webhook-playground
 ```bash
 npx webhook-playground
 ```
+
+---
+
+## ⬆️ Upgrading
+
+Already installed an earlier version? Update the package and re-run migrations:
+
+```bash
+npm install -g webhook-playground@latest
+webhook-play migrate
+```
+
+Migrations are idempotent — every `.sql` file in the `migrations/` folder uses `IF NOT EXISTS` guards, so re-running on an existing database only applies new columns/tables and leaves existing data untouched.
 
 ---
 
@@ -330,6 +344,9 @@ webhook-microservice/
 ---
 
 ## 🆕 What's new
+
+### 2.2.1
+- 📝 Added Upgrading section to README with instructions for updating an existing install and re-running migrations
 
 ### 2.2.0
 - ➕ Toggle request forwarding on/off in real-time from the dashboard — no need to recreate the webhook

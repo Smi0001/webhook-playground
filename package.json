@@ -1,6 +1,6 @@
 {
   "name": "webhook-playground",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Self-hosted webhook inspection and testing tool — capture, inspect, and debug incoming HTTP requests in real time",
   "main": "src/app.js",
   "bin": {
