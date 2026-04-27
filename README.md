@@ -72,13 +72,13 @@ DATABASE_URL=postgresql://webhook_user:yourpassword@localhost:5432/webhook_db
 ### Global install (recommended for team/internal use)
 
 ```bash
-npm install -g webhook-playground
+npm install -g @smi0001/webhook-playground
 ```
 
 ### Or run without installing
 
 ```bash
-npx webhook-playground
+npx @smi0001/webhook-playground
 ```
 
 ---
@@ -88,7 +88,7 @@ npx webhook-playground
 Already installed an earlier version? Update the package and re-run migrations:
 
 ```bash
-npm install -g webhook-playground@latest
+npm install -g @smi0001/webhook-playground@latest
 webhook-play migrate
 ```
 
