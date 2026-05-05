@@ -279,10 +279,11 @@ webhook-play migrate      Run database migrations
 | `POST`   | `/api/webhooks`                        | Create a new webhook               |
 | `GET`    | `/api/webhooks`                        | List all webhooks                  |
 | `GET`    | `/api/webhooks/:uuid`                  | Get a single webhook               |
-| `PUT`    | `/api/webhooks/:uuid`                  | Update webhook name / auth         |
+| `PUT`    | `/api/webhooks/:uuid`                  | Update webhook name / auth / forwarding |
 | `DELETE` | `/api/webhooks/:uuid`                  | Delete a webhook                   |
 | `GET`    | `/api/webhooks/:uuid/requests`         | List captured requests (max 200)   |
 | `GET`    | `/api/webhooks/:uuid/requests/:id`     | Get a single request               |
+| `PATCH`  | `/api/webhooks/:uuid/requests/:id`     | Update a request's remark (bookmark) |
 | `DELETE` | `/api/webhooks/:uuid/requests/:id`     | Delete a single request            |
 | `DELETE` | `/api/webhooks/:uuid/requests`         | Clear all requests for a webhook   |
 | `GET`    | `/api/webhooks/:uuid/stream`           | SSE stream for real-time updates   |
@@ -344,6 +345,9 @@ webhook-microservice/
 ---
 
 ## 🆕 What's new
+
+### 2.3.1
+- 📝 Documented the new `PATCH /api/webhooks/:uuid/requests/:id` endpoint in the API reference and corrected the `PUT /api/webhooks/:uuid` description to reflect forwarding-settings updates
 
 ### 2.3.0
 - 🔎 Added a search box in the dashboard sidebar — filter requests by path, method, body, headers, query params, IP, or remark
