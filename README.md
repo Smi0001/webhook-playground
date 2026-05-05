@@ -345,6 +345,11 @@ webhook-microservice/
 
 ## 🆕 What's new
 
+### 2.3.0
+- 🔎 Added a search box in the dashboard sidebar — filter requests by path, method, body, headers, query params, IP, or remark
+- 🔖 Added per-request remarks — add a note to any request to bookmark it for later reference
+- 📑 Bookmarks dropdown in the sidebar lists all bookmarked requests; click to jump straight to one
+
 ### 2.2.1
 - 📝 Added Upgrading section to README with instructions for updating an existing install and re-running migrations
 

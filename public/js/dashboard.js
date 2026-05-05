@@ -10,6 +10,7 @@ const BASE_URL = `${window.location.origin}${window.APP_BASE || ''}/microservice
 let activeRequestId = null;
 let eventSource    = null;
 let webhookMeta    = null;   // populated by loadWebhookMeta()
+let requestsCache  = new Map(); // id -> request, for client-side search/bookmarks
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,13 @@ function fwdBadgeHtml(req) {
   return `<span class="fwd-badge fwd-warn">${s}</span>`;
 }
 
+function bookmarkIconHtml(req) {
+  if (!req.remark) return '';
+  return `<span class="bookmark-indicator" title="${escapeHtml(req.remark)}">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  </span>`;
+}
+
 function buildSidebarItem(req) {
   const ip = req.ip_address || '—';
   return `
@@ -65,6 +73,7 @@ function buildSidebarItem(req) {
       <div class="request-item-content">
         <div class="request-item-top">
           ${methodBadge(req.method)}
+          ${bookmarkIconHtml(req)}
           <span class="request-item-meta" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             ${escapeHtml(req.path || '/')}
           </span>
@@ -75,9 +84,20 @@ function buildSidebarItem(req) {
           &nbsp;·&nbsp;
           <span>${formatTime(req.received_at)}</span>
         </div>
+        ${req.remark ? `<div class="request-item-remark" title="${escapeHtml(req.remark)}">${escapeHtml(req.remark)}</div>` : ''}
       </div>
       <button class="delete-req-btn" onclick="deleteRequest(event, ${req.id})" title="Delete">✕</button>
     </div>`;
+}
+
+function refreshSidebarItem(req) {
+  const existing = document.getElementById(`req-${req.id}`);
+  if (!existing) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildSidebarItem(req);
+  const fresh = tmp.firstElementChild;
+  if (existing.classList.contains('active')) fresh.classList.add('active');
+  existing.replaceWith(fresh);
 }
 
 function prependSidebarItem(req) {
@@ -86,6 +106,8 @@ function prependSidebarItem(req) {
   const tmp = document.createElement('div');
   tmp.innerHTML = buildSidebarItem(req);
   list.prepend(tmp.firstElementChild);
+  requestsCache.set(req.id, req);
+  applySidebarSearch();
 }
 
 // ─── Load initial requests ────────────────────────────────────────────────────
@@ -96,6 +118,7 @@ async function loadRequests() {
     const list = await res.json();
     const sidebarList = document.getElementById('sidebarList');
     sidebarList.innerHTML = '';
+    requestsCache.clear();
 
     if (!list.length) {
       sidebarList.innerHTML = `
@@ -107,6 +130,7 @@ async function loadRequests() {
     }
 
     list.forEach((req) => {
+      requestsCache.set(req.id, req);
       const tmp = document.createElement('div');
       tmp.innerHTML = buildSidebarItem(req);
       sidebarList.appendChild(tmp.firstElementChild);
@@ -138,6 +162,7 @@ async function selectRequest(id) {
     const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests/${id}`);
     if (!res.ok) throw new Error('Not found');
     const req = await res.json();
+    requestsCache.set(req.id, req);
     renderDetail(req);
   } catch (err) {
     console.error('Failed to load request detail:', err);
@@ -192,11 +217,21 @@ function renderDetail(req) {
     ? queryKeys.map((k) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(query[k])}</td></tr>`).join('')
     : `<tr><td colspan="2" class="no-data">No query parameters</td></tr>`;
 
+  // Remark
+  renderRemark(req);
+
   // Forwarding
   renderForwarding(req);
 
   // Body
   renderBody(req);
+}
+
+function renderRemark(req) {
+  const input = document.getElementById('remarkInput');
+  const clearBtn = document.getElementById('remarkClearBtn');
+  input.value = req.remark || '';
+  clearBtn.classList.toggle('hidden', !req.remark);
 }
 
 function renderBody(req) {
@@ -420,6 +455,103 @@ async function loadWebhookMeta() {
   } catch (_) {}
 }
 
+// ─── Search & filter ─────────────────────────────────────────────────────────
+
+function requestSearchHaystack(req) {
+  const parts = [
+    req.method, req.path, req.ip_address, req.content_type,
+    req.body, req.remark,
+    typeof req.headers === 'object' ? JSON.stringify(req.headers) : req.headers,
+    typeof req.query_params === 'object' ? JSON.stringify(req.query_params) : req.query_params,
+    typeof req.body_parsed === 'object' ? JSON.stringify(req.body_parsed) : req.body_parsed,
+  ];
+  return parts.filter(Boolean).join(' ').toLowerCase();
+}
+
+function applySidebarSearch() {
+  const input = document.getElementById('sidebarSearchInput');
+  const q = (input?.value || '').trim().toLowerCase();
+  const items = document.querySelectorAll('.request-item');
+  let visibleCount = 0;
+  items.forEach((el) => {
+    const id = Number(el.id.replace('req-', ''));
+    const req = requestsCache.get(id);
+    const match = !q || (req && requestSearchHaystack(req).includes(q));
+    el.classList.toggle('hidden', !match);
+    if (match) visibleCount += 1;
+  });
+
+  const list = document.getElementById('sidebarList');
+  list.querySelector('.sidebar-empty-search')?.remove();
+  if (q && visibleCount === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'sidebar-empty sidebar-empty-search';
+    empty.textContent = `No requests match “${q}”`;
+    list.appendChild(empty);
+  }
+}
+
+// ─── Bookmarks dropdown ──────────────────────────────────────────────────────
+
+function toggleBookmarksDropdown() {
+  const dd = document.getElementById('bookmarksDropdown');
+  if (dd.classList.contains('hidden')) {
+    renderBookmarksDropdown();
+    dd.classList.remove('hidden');
+  } else {
+    dd.classList.add('hidden');
+  }
+}
+
+function renderBookmarksDropdown() {
+  const dd = document.getElementById('bookmarksDropdown');
+  const bookmarked = [...requestsCache.values()].filter((r) => r.remark);
+  bookmarked.sort((a, b) => new Date(b.received_at) - new Date(a.received_at));
+
+  if (!bookmarked.length) {
+    dd.innerHTML = `<div class="bookmarks-empty">No bookmarked requests yet. Add a remark on any request to bookmark it.</div>`;
+    return;
+  }
+  dd.innerHTML = bookmarked.map((r) => `
+    <div class="bookmark-item" data-id="${r.id}">
+      <div class="bookmark-item-remark">${escapeHtml(r.remark)}</div>
+      <div class="bookmark-item-meta">${methodBadge(r.method)} <span>${escapeHtml(r.path || '/')}</span></div>
+    </div>`).join('');
+
+  dd.querySelectorAll('.bookmark-item').forEach((el) => {
+    el.addEventListener('click', () => {
+      const id = Number(el.getAttribute('data-id'));
+      dd.classList.add('hidden');
+      selectRequest(id);
+    });
+  });
+}
+
+// ─── Remark save ─────────────────────────────────────────────────────────────
+
+async function saveRemark(text) {
+  if (!activeRequestId) return;
+  try {
+    const res = await fetch(`${window.APP_BASE || ''}/api/webhooks/${UUID}/requests/${activeRequestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ remark: text }),
+    });
+    if (!res.ok) {
+      showToast('Failed to save remark');
+      return;
+    }
+    const updated = await res.json();
+    requestsCache.set(updated.id, updated);
+    refreshSidebarItem(updated);
+    renderRemark(updated);
+    applySidebarSearch();
+    showToast(text ? 'Remark saved' : 'Remark cleared');
+  } catch (_) {
+    showToast('Failed to save remark');
+  }
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -468,5 +600,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     updateForwarding(true, url);
+  });
+
+  // Sidebar search
+  const searchInput = document.getElementById('sidebarSearchInput');
+  const searchClear = document.getElementById('sidebarSearchClear');
+  searchInput.addEventListener('input', () => {
+    searchClear.classList.toggle('hidden', !searchInput.value);
+    applySidebarSearch();
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClear.classList.add('hidden');
+    applySidebarSearch();
+    searchInput.focus();
+  });
+
+  // Bookmarks dropdown
+  document.getElementById('bookmarksBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleBookmarksDropdown();
+  });
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('bookmarksDropdown');
+    if (!dd.contains(e.target) && e.target.closest('#bookmarksBtn') === null) {
+      dd.classList.add('hidden');
+    }
+  });
+
+  // Remark editor
+  const remarkInput = document.getElementById('remarkInput');
+  document.getElementById('remarkSaveBtn').addEventListener('click', () => {
+    saveRemark(remarkInput.value.trim());
+  });
+  remarkInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveRemark(remarkInput.value.trim());
+    }
+  });
+  document.getElementById('remarkClearBtn').addEventListener('click', () => {
+    remarkInput.value = '';
+    saveRemark('');
   });
 });

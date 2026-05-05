@@ -47,11 +47,20 @@
           <span id="connDot" class="conn-dot" style="display:inline-block;vertical-align:middle;margin-left:6px;" title="Connecting…"></span>
         </span>
         <div class="sidebar-actions">
+          <button class="sidebar-icon-btn" id="bookmarksBtn" title="Bookmarked requests">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
           <button class="sidebar-icon-btn" id="clearAllBtn" title="Clear all requests">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
           </button>
         </div>
       </div>
+      <div class="sidebar-search">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="sidebarSearchInput" placeholder="Search path, body, headers, remark…" spellcheck="false">
+        <button class="sidebar-search-clear hidden" id="sidebarSearchClear" title="Clear search">✕</button>
+      </div>
+      <div class="bookmarks-dropdown hidden" id="bookmarksDropdown"></div>
       <div class="sidebar-list" id="sidebarList">
         <div class="sidebar-empty" id="sidebarEmpty">
           <div class="pulse-ring"></div>
@@ -73,6 +82,17 @@
       <div class="detail-content hidden" id="detailContent">
         <!-- Summary row -->
         <div class="detail-summary" id="detailSummary"></div>
+
+        <!-- Remark / bookmark -->
+        <div class="remark-block" id="remarkBlock">
+          <label class="remark-label" for="remarkInput">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Remark
+          </label>
+          <input type="text" id="remarkInput" placeholder="Add a note to bookmark this request…" maxlength="200">
+          <button class="btn btn-primary btn-sm" id="remarkSaveBtn">Save</button>
+          <button class="btn btn-ghost btn-sm hidden" id="remarkClearBtn" title="Remove bookmark">Clear</button>
+        </div>
 
         <!-- Headers -->
         <div class="collapsible open" id="sectionHeaders">

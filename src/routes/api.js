@@ -184,6 +184,27 @@ router.get('/webhooks/:uuid/requests/:id', async (req, res) => {
   }
 });
 
+// Update remark on a single request
+router.patch('/webhooks/:uuid/requests/:id', async (req, res) => {
+  const { remark } = req.body;
+  const trimmed = (typeof remark === 'string') ? remark.trim() : '';
+  try {
+    const { rows } = await db.query(
+      `UPDATE webhook_requests
+       SET remark = $1
+       WHERE id = $2
+         AND webhook_id = (SELECT id FROM webhooks WHERE uuid = $3)
+       RETURNING *`,
+      [trimmed || null, req.params.id, req.params.uuid]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error('PATCH /api/webhooks/:uuid/requests/:id:', err.message);
+    res.status(500).json({ error: 'Failed to update request' });
+  }
+});
+
 // Delete a single request
 router.delete('/webhooks/:uuid/requests/:id', async (req, res) => {
   try {
